@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NBE Progress</title>
+<meta name="description" content="متابعة نسب إنجاز مشروعات NBE من الموقع">
+<meta name="theme-color" content="#192e63">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NBE Progress">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--navy:#192e63;--green:#0c803f}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-family:"Segoe UI",Tahoma,sans-serif}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#eef1f5;padding-top:env(safe-area-inset-top,0px)}
+#load{position:fixed;inset:0;display:grid;place-content:center;justify-items:center;gap:18px;background:var(--navy);color:#fff;transition:opacity .4s;z-index:2}
+#load img{width:112px;height:112px;border-radius:26px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#load span{font-size:15px;opacity:.85}
+#load.out{opacity:0;pointer-events:none}
+#inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;gap:10px;align-items:center;background:#fff;color:#15202b;border-radius:14px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:14px}
+#inst img{width:40px;height:40px;border-radius:10px}
+#inst p{margin:0;flex:1;line-height:1.4}
+#inst button{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}
+#instGo{background:var(--green);color:#fff}
+#instX{background:transparent;color:#5b6873;padding:10px 6px!important}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="load"><img src="icon-192.png" alt=""><span>NBE Progress</span></div>
+<iframe id="app" title="NBE Progress" allow="camera; clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div id="inst" hidden role="dialog" aria-label="تثبيت التطبيق">
+  <img src="icon-192.png" alt="">
+  <p id="instTxt"><b>ثبّت NBE Progress</b><br>هيبقى أيقونة على الشاشة ويفتح زي أي أبلكيشن.</p>
+  <button id="instGo">تثبيت</button><button id="instX" aria-label="إغلاق">✕</button>
+</div>
+<script>
+var APP = 'https://script.google.com/macros/s/AKfycbzKCDu5yNnmeQxlQSfU_EUcvSzujkTdDVeZ6R_4CaQntGwFfeENhoMuan5IAqEcFauYUQ/exec';
+var fr = document.getElementById('app');
+fr.src = APP + location.search;
+fr.addEventListener('load', function(){ setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 400); });
+setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 8000);
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+
+var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+var dismissed = false; try { dismissed = localStorage.getItem('nbe-inst-x') === '1'; } catch (e) {}
+var box = document.getElementById('inst'), deferred = null;
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred = e; if (!standalone && !dismissed) box.hidden = false; });
+document.getElementById('instGo').onclick = function(){
+  if (deferred) { deferred.prompt(); deferred.userChoice.finally(function(){ box.hidden = true; deferred = null; }); }
+  else box.hidden = true;
+};
+document.getElementById('instX').onclick = function(){ box.hidden = true; try { localStorage.setItem('nbe-inst-x', '1'); } catch (e) {} };
+window.addEventListener('appinstalled', function(){ box.hidden = true; });
+if (!standalone && !dismissed && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+  document.getElementById('instTxt').innerHTML = '<b>ثبّت NBE Progress</b><br>دوس زرار المشاركة ⬆️ تحت، وبعدين «إضافة إلى الشاشة الرئيسية».';
+  document.getElementById('instGo').hidden = true; box.hidden = false;
+}
+</script>
+</body>
+</html>

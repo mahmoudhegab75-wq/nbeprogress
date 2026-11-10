@@ -1,0 +1,19 @@
+{
+  "name": "NBE Progress",
+  "short_name": "NBE Progress",
+  "description": "متابعة نسب إنجاز مشروعات NBE من الموقع — مركز الاستشارات المتقدم ACC",
+  "lang": "ar",
+  "dir": "rtl",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#192e63",
+  "theme_color": "#192e63",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
