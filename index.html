@@ -29,6 +29,7 @@ html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-famil
 #inst button{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}
 #instGo{background:var(--green);color:#fff}
 #instX{background:transparent;color:#5b6873;padding:10px 6px!important}
+#load .btn{background:var(--green);color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:12px;font-size:15px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -43,9 +44,23 @@ html,body{margin:0;height:100%;background:var(--navy);overflow:hidden;font-famil
 <script>
 var APP = 'https://script.google.com/macros/s/AKfycbzKCDu5yNnmeQxlQSfU_EUcvSzujkTdDVeZ6R_4CaQntGwFfeENhoMuan5IAqEcFauYUQ/exec';
 var fr = document.getElementById('app');
-fr.src = APP + location.search;
-fr.addEventListener('load', function(){ setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 400); });
-setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 8000);
+var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+var standalone0 = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+var direct = APP + location.search;
+if (mobile) {
+  fr.src = direct;
+  fr.addEventListener('load', function(){ setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 400); });
+  setTimeout(function(){ document.getElementById('load').classList.add('out'); }, 8000);
+} else {
+  fr.remove();
+  var ld = document.getElementById('load');
+  ld.querySelector('span').textContent = 'جاري فتح NBE Progress…';
+  var go = document.createElement('a'); go.href = direct; go.className = 'btn'; go.textContent = 'افتح التطبيق';
+  ld.appendChild(go);
+  var gotPrompt = false;
+  window.addEventListener('beforeinstallprompt', function(){ gotPrompt = true; ld.querySelector('span').textContent = 'NBE Progress'; });
+  setTimeout(function(){ if (standalone0 || !gotPrompt) location.replace(direct); }, standalone0 ? 0 : 1500);
+}
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
 
